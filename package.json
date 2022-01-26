@@ -17,5 +17,11 @@
   "bugs": {
     "url": "https://github.com/nam-k-nguyen/webrtc-practice/issues"
   },
-  "homepage": "https://github.com/nam-k-nguyen/webrtc-practice#readme"
+  "homepage": "https://github.com/nam-k-nguyen/webrtc-practice#readme",
+  "dependencies": {
+    "ejs": "^3.1.6",
+    "express": "^4.17.2",
+    "socket.io": "^4.4.1",
+    "uuid": "^8.3.2"
+  }
 }
