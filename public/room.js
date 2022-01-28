@@ -21,6 +21,7 @@ const peers = {
 
 // Run when user receive id from peer server
 myPeer.on('open', userId => {
+    console.log('Received an id from peer server')
     myId = userId
     mediaStreaming()
     socket.emit('join-room', ROOM_ID, myId)
@@ -45,6 +46,7 @@ socket.on('user-disconnected', disconnectedUserId => {
 function mediaStreaming() {
     var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia
     getUserMedia({ video: true, audio: true }).then(stream => {
+        console.log('got local media stream')
         myStream = stream
         const userVideo = document.createElement('video')
         userVideo.muted = true
@@ -53,11 +55,16 @@ function mediaStreaming() {
 
         // Run when called by existing user
         myPeer.on('call', call => {
+            console.log('Called by an existing user')
             const existingUserVideo = createVideo()
             call.answer(myStream)
+            console.log("answered existing user with a stream")
             call.answer(myStream)
+            console.log("answered existing user with a stream")
             call.answer(myStream)
+            console.log("answered existing user with a stream")
             call.on('stream', existingUserStream => {
+                console.log('stream received from existing user')
                 if (!peers[call.peer]) {
                     addVideoStream(existingUserVideo, existingUserStream, call.peer)
                 }
@@ -75,10 +82,13 @@ function mediaStreaming() {
 
         // run when other user connected
         socket.on('user-connected', connectedUserId => {
+            console.log('another user connected')
             const call = myPeer.call(connectedUserId, myStream)
+            console.log("called another user")
             const connectedUserVideo = createVideo()
 
             call.on('stream', connectedUserStream => {
+                console.log('Stream received from another user')
                 if (!peers[connectedUserId]) {
                     addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
                 }
