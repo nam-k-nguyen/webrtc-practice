@@ -33,18 +33,18 @@ myPeer.on('call', call => {
 
 
     call.on('stream', existingUserStream => {
-        
         const existingUserVideo = createVideo()
         if (!peers[call.peer]) {
             addVideoStream(existingUserVideo, existingUserStream)
         }
-
         peers[call.peer] = {
             video: existingUserVideo,
             call: call
         }
     })
-
+    call.on('close', () => {
+        getById(call.peer).remove()
+    })
 })
 
 
