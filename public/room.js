@@ -55,6 +55,8 @@ function mediaStreaming() {
         myPeer.on('call', call => {
             const existingUserVideo = createVideo()
             call.answer(myStream)
+            call.answer(myStream)
+            call.answer(myStream)
             call.on('stream', existingUserStream => {
                 if (!peers[call.peer]) {
                     addVideoStream(existingUserVideo, existingUserStream, call.peer)
