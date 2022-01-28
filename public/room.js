@@ -29,11 +29,9 @@ myPeer.on('open', userId => {
 
 // Run when called by existing user
 myPeer.on('call', call => {
+    const existingUserVideo = createVideo()
     call.answer(myStream)
-
-
     call.on('stream', existingUserStream => {
-        const existingUserVideo = createVideo()
         if (!peers[call.peer]) {
             addVideoStream(existingUserVideo, existingUserStream, call.peer)
         }
@@ -43,7 +41,8 @@ myPeer.on('call', call => {
         }
     })
     call.on('close', () => {
-        getById(call.peer).remove()
+        console.log('remove existing user video')
+        existingUserVideo.remove()
     })
 })
 
@@ -51,10 +50,10 @@ myPeer.on('call', call => {
 // run when other user connected
 socket.on('user-connected', connectedUserId => {
     const call = myPeer.call(connectedUserId, myStream)
+    const connectedUserVideo = createVideo()
 
     call.on('stream', connectedUserStream => {
 
-        const connectedUserVideo = createVideo()
         if (!peers[connectedUserId]) {
             addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
         }
@@ -66,12 +65,19 @@ socket.on('user-connected', connectedUserId => {
     })
 
     call.on('close', () => {
-        getById(connectedUserId).remove()
+        console.log('remove connected user video')
+        connectedUserVideo.remove()
     })
 })
 
 // run when other user disconnected
-socket.on('user-disconnected', disconnectedUserId => {/* FIX HERE */ })
+socket.on('user-disconnected', disconnectedUserId => {
+    console.log('user disconnected')
+    if (peers[disconnectedUserId]) {
+        peers[disconnectedUserId].call.close()
+        delete peers[disconnectedUserId]
+    }
+})
 
 
 // ----------------------
