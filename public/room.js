@@ -1,8 +1,9 @@
 const socket = io('/')
 const myPeer = new Peer(undefined, {
-    secure: true,
     host: '0.peerjs.com',
-    port: '443'
+    port: '443', 
+    debug: 3,
+    pingInterval: 5000
 })
 
 
