@@ -27,48 +27,10 @@ myPeer.on('open', userId => {
 })
 
 
-// Run when called by existing user
-myPeer.on('call', call => {
-    const existingUserVideo = createVideo()
-    call.answer(myStream)
-    call.on('stream', existingUserStream => {
-        if (!peers[call.peer]) {
-            addVideoStream(existingUserVideo, existingUserStream, call.peer)
-        }
-        peers[call.peer] = {
-            video: existingUserVideo,
-            call: call
-        }
-    })
-    call.on('close', () => {
-        console.log('remove existing user video')
-        existingUserVideo.remove()
-    })
-})
 
 
-// run when other user connected
-socket.on('user-connected', connectedUserId => {
-    const call = myPeer.call(connectedUserId, myStream)
-    const connectedUserVideo = createVideo()
 
-    call.on('stream', connectedUserStream => {
 
-        if (!peers[connectedUserId]) {
-            addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
-        }
-
-        peers[connectedUserId] = {
-            video: connectedUserVideo,
-            call: call
-        }
-    })
-
-    call.on('close', () => {
-        console.log('remove connected user video')
-        connectedUserVideo.remove()
-    })
-})
 
 // run when other user disconnected
 socket.on('user-disconnected', disconnectedUserId => {
@@ -85,19 +47,63 @@ socket.on('user-disconnected', disconnectedUserId => {
 
 // Function to request media stream from user
 function mediaStreaming() {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true}).then(stream => {
+    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
         myStream = stream
         const userVideo = document.createElement('video')
         userVideo.muted = true
         addVideoStream(userVideo, stream, myId)
+
+
+        // Run when called by existing user
+        myPeer.on('call', call => {
+            const existingUserVideo = createVideo()
+            call.answer(myStream)
+            call.on('stream', existingUserStream => {
+                if (!peers[call.peer]) {
+                    addVideoStream(existingUserVideo, existingUserStream, call.peer)
+                }
+                peers[call.peer] = {
+                    video: existingUserVideo,
+                    call: call
+                }
+            })
+            call.on('close', () => {
+                console.log('remove existing user video')
+                existingUserVideo.remove()
+            })
+        })
+
+
+        // run when other user connected
+        socket.on('user-connected', connectedUserId => {
+            const call = myPeer.call(connectedUserId, myStream)
+            const connectedUserVideo = createVideo()
+
+            call.on('stream', connectedUserStream => {
+
+                if (!peers[connectedUserId]) {
+                    addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
+                }
+
+                peers[connectedUserId] = {
+                    video: connectedUserVideo,
+                    call: call
+                }
+            })
+
+            call.on('close', () => {
+                console.log('remove connected user video')
+                connectedUserVideo.remove()
+            })
+        })
     })
 }
 
 function createVideo() { return document.createElement('video') }
 function addToGrid(element) { videoGrid.appendChild(element) }
 
-function a(msg) {b(); console.log(msg)}
-function b() {console.log(Date.now() % 10000)}
+function a(msg) { b(); console.log(msg) }
+function b() { console.log(Date.now() % 10000) }
 
 function addVideoStream(video, stream, id) {
     video.addEventListener('loadedmetadata', () => video.play())
