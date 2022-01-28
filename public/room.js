@@ -35,7 +35,7 @@ myPeer.on('call', call => {
     call.on('stream', existingUserStream => {
         const existingUserVideo = createVideo()
         if (!peers[call.peer]) {
-            addVideoStream(existingUserVideo, existingUserStream)
+            addVideoStream(existingUserVideo, existingUserStream, call.peer)
         }
         peers[call.peer] = {
             video: existingUserVideo,
@@ -56,7 +56,7 @@ socket.on('user-connected', connectedUserId => {
 
         const connectedUserVideo = createVideo()
         if (!peers[connectedUserId]) {
-            addVideoStream(connectedUserVideo, connectedUserStream)
+            addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
         }
 
         peers[connectedUserId] = {
@@ -80,15 +80,10 @@ socket.on('user-disconnected', disconnectedUserId => {/* FIX HERE */ })
 // Function to request media stream from user
 function mediaStreaming() {
     navigator.mediaDevices.getUserMedia({ video: true, audio: true}).then(stream => {
-        
-        b()
-        console.log("mediaStreaming called")
         myStream = stream
-        
         const userVideo = document.createElement('video')
         userVideo.muted = true
         addVideoStream(userVideo, stream, myId)
-
     })
 }
 
