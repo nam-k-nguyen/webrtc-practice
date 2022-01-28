@@ -21,8 +21,6 @@ const peers = {
 
 // Run when user receive id from peer server
 myPeer.on('open', userId => {
-    b()
-    a("ID received from peerjs")
     myId = userId
     mediaStreaming()
     socket.emit('join-room', ROOM_ID, myId)
@@ -32,20 +30,14 @@ myPeer.on('open', userId => {
 // Run when called by existing user
 myPeer.on('call', call => {
     call.answer(myStream)
-    
-    b()
-    a('Called by existing user')
+
 
     call.on('stream', existingUserStream => {
         
-        b()
-        a('Stream sent by existing user')
-        a(existingUserStream)
-        
         const existingUserVideo = createVideo()
         if (!peers[call.peer]) {
+            addVideoStream(existingUserVideo, existingUserStream)
         }
-        addVideoStream(existingUserVideo, existingUserStream)
 
         peers[call.peer] = {
             video: existingUserVideo,
@@ -59,20 +51,13 @@ myPeer.on('call', call => {
 // run when other user connected
 socket.on('user-connected', connectedUserId => {
     const call = myPeer.call(connectedUserId, myStream)
-    
-    b()
-    a('Called new user')
 
     call.on('stream', connectedUserStream => {
 
-        b()
-        a('Stream sent by connected new user')
-        a(connectedUserStream)
-
         const connectedUserVideo = createVideo()
         if (!peers[connectedUserId]) {
+            addVideoStream(connectedUserVideo, connectedUserStream)
         }
-        addVideoStream(connectedUserVideo, connectedUserStream)
 
         peers[connectedUserId] = {
             video: connectedUserVideo,
@@ -81,7 +66,7 @@ socket.on('user-connected', connectedUserId => {
     })
 
     call.on('close', () => {
-
+        getById(connectedUserId).remove()
     })
 })
 
@@ -102,7 +87,7 @@ function mediaStreaming() {
         
         const userVideo = document.createElement('video')
         userVideo.muted = true
-        addVideoStream(userVideo, stream)
+        addVideoStream(userVideo, stream, myId)
 
     })
 }
@@ -110,11 +95,12 @@ function mediaStreaming() {
 function createVideo() { return document.createElement('video') }
 function addToGrid(element) { videoGrid.appendChild(element) }
 
-function a(msg) {console.log(msg)}
+function a(msg) {b(); console.log(msg)}
 function b() {console.log(Date.now() % 10000)}
 
-function addVideoStream(video, stream) {
+function addVideoStream(video, stream, id) {
     video.addEventListener('loadedmetadata', () => video.play())
     video.srcObject = stream
+    video.setAttribute('id', id)
     addToGrid(video)
 }
