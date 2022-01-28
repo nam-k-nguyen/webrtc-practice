@@ -28,10 +28,6 @@ myPeer.on('open', userId => {
 
 
 
-
-
-
-
 // run when other user disconnected
 socket.on('user-disconnected', disconnectedUserId => {
     console.log('user disconnected')
@@ -47,7 +43,8 @@ socket.on('user-disconnected', disconnectedUserId => {
 
 // Function to request media stream from user
 function mediaStreaming() {
-    navigator.mediaDevices.getUserMedia({ video: true, audio: true }).then(stream => {
+    var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia
+    getUserMedia({ video: true, audio: true }).then(stream => {
         myStream = stream
         const userVideo = document.createElement('video')
         userVideo.muted = true
@@ -80,11 +77,9 @@ function mediaStreaming() {
             const connectedUserVideo = createVideo()
 
             call.on('stream', connectedUserStream => {
-
                 if (!peers[connectedUserId]) {
                     addVideoStream(connectedUserVideo, connectedUserStream, connectedUserId)
                 }
-
                 peers[connectedUserId] = {
                     video: connectedUserVideo,
                     call: call
@@ -96,7 +91,7 @@ function mediaStreaming() {
                 connectedUserVideo.remove()
             })
         })
-    })
+    }).catch(err => {console.log(err)})
 }
 
 function createVideo() { return document.createElement('video') }
