@@ -2,7 +2,7 @@ const socket = io('/')
 const myPeer = new Peer(undefined, {
     host: '0.peerjs.com',
     port: '443', 
-    debug: 3,
+    debug: 0,
     pingInterval: 5000,
     iceServers: [
         { urls: 'stun:stun.l.google.com:19302'  }, 
@@ -92,19 +92,23 @@ socket.on('user-disconnected', disconnectedUserId => {
 function mediaStreaming() {
     var getUserMedia = navigator.mediaDevices.getUserMedia || navigator.mediaDevices.webkitGetUserMedia || navigator.mediaDevices.mozGetUserMedia
     getUserMedia({ video: true, audio: true }).then(stream => {
+        
         console.log('got local media stream')
         myStream = stream
         const userVideo = document.createElement('video')
         userVideo.muted = true
         addVideoStream(userVideo, stream, myId)
 
-
         // Run when called by existing user
         myPeer.on('call', call => {
             console.log('Called by an existing user')
             const existingUserVideo = createVideo()
-            call.answer(myStream)
-            console.log("answered existing user with a stream")
+            try {
+                call.answer(myStream)
+                console.log("answered existing user with a stream")
+            } catch(e) {
+                console.log(e)
+            }
             call.on('stream', existingUserStream => {
                 console.log('stream received from existing user')
                 if (!peers[call.peer]) {
