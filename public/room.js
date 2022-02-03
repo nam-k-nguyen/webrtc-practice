@@ -105,10 +105,6 @@ function mediaStreaming() {
             const existingUserVideo = createVideo()
             call.answer(myStream)
             console.log("answered existing user with a stream")
-            call.answer(myStream)
-            console.log("answered existing user with a stream")
-            call.answer(myStream)
-            console.log("answered existing user with a stream")
             call.on('stream', existingUserStream => {
                 console.log('stream received from existing user')
                 if (!peers[call.peer]) {
