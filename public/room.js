@@ -73,7 +73,7 @@ myPeer.on('open', userId => {
     socket.emit('join-room', ROOM_ID, myId)
 })
 
-
+socket.on('welcome', data => {alert('FROM SERVER: ' + data)})
 
 // run when other user disconnected
 socket.on('user-disconnected', disconnectedUserId => {
