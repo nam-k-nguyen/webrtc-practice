@@ -25,10 +25,10 @@ io.on('connection', socket => {
         socket.emit('text', 'You have joined room ' + roomId)
         
         socket.to(roomId).emit('user-connected', connectedUserId)
-        socket.emit('text', 'Another user has connected to room ' + roomId)
+        socket.emit('text', 'User ' + connectedUserId + ' has connected to room ' + roomId)
         
         socket.on('disconnect', () => {socket.to(roomId).emit('user-disconnected', connectedUserId)})
-        socket.emit('text', 'Another user has disconnected with room ' + roomId)
+        socket.emit('text', 'User ' + connectedUserId + ' has disconnected with room ' + roomId)
     })
 })
 
