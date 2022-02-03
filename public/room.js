@@ -78,10 +78,10 @@ socket.on('text', data => {console.log('FROM SERVER: ' + data)})
 // run when other user disconnected
 socket.on('user-disconnected', disconnectedUserId => {
     console.log('user disconnected')
-    if (peers[disconnectedUserId]) {
-        peers[disconnectedUserId].call.close()
-        delete peers[disconnectedUserId]
-    }
+    // if (peers[disconnectedUserId]) {
+    //     peers[disconnectedUserId].call.close()
+    //     delete peers[disconnectedUserId]
+    // }
 })
 
 

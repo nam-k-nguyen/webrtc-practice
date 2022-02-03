@@ -22,6 +22,7 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, connectedUserId) => {
         
         socket.join(roomId)
+        socket.emit('text', 'This is your socket ' + socket)
         socket.emit('text', 'You have joined room ' + roomId)
         
         socket.to(roomId).emit('user-connected', connectedUserId)
