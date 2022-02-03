@@ -78,10 +78,10 @@ socket.on('text', data => {console.log('FROM SERVER: ' + data)})
 // run when other user disconnected
 socket.on('user-disconnected', disconnectedUserId => {
     console.log('user disconnected')
-    // if (peers[disconnectedUserId]) {
-    //     peers[disconnectedUserId].call.close()
-    //     delete peers[disconnectedUserId]
-    // }
+    if (peers[disconnectedUserId]) {
+        peers[disconnectedUserId].call.close()
+        delete peers[disconnectedUserId]
+    }
 })
 
 
@@ -128,9 +128,10 @@ function mediaStreaming() {
 
         // run when other user connected
         socket.on('user-connected', connectedUserId => {
-            console.log('another user connected')
+            
+            console.log('Another user connected')
             const call = myPeer.call(connectedUserId, myStream)
-            console.log("called another user")
+            console.log("Called another user")
             const connectedUserVideo = createVideo()
 
             call.on('stream', connectedUserStream => {
@@ -145,7 +146,7 @@ function mediaStreaming() {
             })
 
             call.on('close', () => {
-                console.log('remove connected user video')
+                console.log('Remove connected user video')
                 connectedUserVideo.remove()
             })
         })

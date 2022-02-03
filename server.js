@@ -22,14 +22,16 @@ io.on('connection', socket => {
     socket.on('join-room', (roomId, connectedUserId) => {
         
         socket.join(roomId)
-        socket.emit('text', 'This is your socket ' + socket)
+        socket.emit('text', 'This is your socket ' + socket.id)
         socket.emit('text', 'You have joined room ' + roomId)
         
         socket.to(roomId).emit('user-connected', connectedUserId)
         socket.emit('text', 'User ' + connectedUserId + ' has connected to room ' + roomId)
         
-        socket.on('disconnect', () => {socket.to(roomId).emit('user-disconnected', connectedUserId)})
-        socket.emit('text', 'User ' + connectedUserId + ' has disconnected with room ' + roomId)
+        socket.on('disconnect', () => {
+            socket.to(roomId).emit('user-disconnected', connectedUserId)
+            socket.emit('text', 'User ' + connectedUserId + ' has disconnected with room ' + roomId)
+        })
     })
 })
 
